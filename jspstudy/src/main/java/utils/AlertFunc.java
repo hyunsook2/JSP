@@ -27,7 +27,7 @@ public class AlertFunc {
 			out.println(script);
 		} catch(IOException e) {
 			e.printStackTrace();
-	}
+		}
 	}
 	public static void alertLocation(HttpServletResponse resp,String msg,String url) {
 		try {
