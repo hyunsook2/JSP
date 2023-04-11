@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fruitlist>
+	<fruit>
+		<name>사과</name>
+		<from>캄보디아</from>
+		<price>40</price>
+		<br></br>
+	</fruit>
+	<fruit>
+		<name>포도</name>
+		<from>우간다</from>
+		<price>60</price>
+		<br></br>
+	</fruit>
+	<fruit>
+		<name>오렌지</name>
+		<from>파푸아뉴기니</from>
+		<price>50</price>
+		<br></br>
+	</fruit>
+	<fruit>
+		<name>자몽</name>
+		<from>베트남</from>
+		<price>60</price>
+		<br></br>
+	</fruit>
+	<fruit>
+		<name>수박</name>
+		<from>소말리아</from>
+		<price>100</price>
+		<br></br>
+	</fruit>
+</fruitlist>
