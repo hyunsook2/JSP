@@ -13,48 +13,61 @@
          <colgroup>
             <col width="15%"/><col width="35%" /> <col width="15%" /><col width="*" />
          </colgroup>
-      <tr>
+      	<tr>
             <td>번호</td><td>${dto.idx}</td>
-         <td>작성자</td><td>${dto.name}</td>
-         
-      </tr>
-      <tr>
+         	<td>작성자</td><td>${dto.name}</td>
+	    </tr>
+	    <tr>
             <td>작성일</td><td>${dto.postdate}</td>
             <td>조회수</td><td>${dto.visitcount}</td>
-      </tr>
-      <tr>
-      <td>제목</td><td colspan="3">${dto.title}</td>
-      
-      </tr>
-      <tr>
-      <td>내용</td><td colspan="3">${dto.content}</td>
-      
-      </tr>
-      <tr>
-         <td>첨부파일</td>
-         <td>
-            <c:if test="${not empty dto.ofile}">
-            ${dto.ofile}
-            <a href="../m2board/download.do?ofile=${dao.ofile}&nfile=${dto.nfile}&idx=${dto.idx}&nfile={dto.nfile}">[다운로드]</a>
-            <button type="button" id="downbtn">다운로드</button>
-            </c:if>
-         </td>
+      	</tr>
+      	<tr>
+         	<td>제목</td><td colspan="3">${dto.title}</td>
+      	</tr>
+     	<tr>
+         	<td>내용</td><td colspan="3"><c:out value="${dto.content}" escapeXml="true"/></td>
+      	</tr>
+      	<tr>
+	         <td>첨부파일</td>
+	         <td>
+	            <c:if test="${not empty dto.ofile}">
+		            ${dto.ofile}
+		            <a href="../m2board/download.do?ofile=${dto.ofile}&nfile=${dto.nfile}&idx=${dto.idx}">[다운로드]</a>
+		            <button type="button" id="downbtn">다운로드</button>
+	            </c:if>
+	         </td>
          <td>다운로드수</td>
          <td id="dcount">${dto.downcount}</td>
       </tr>
-       <tr>
-      <td colspan="4" align="center">
-         <button type="button" onclick="location.href='../m2board/pass.do?mode=edit&idx=${param.idx}';">
-            수정하기
-         </button>
-         <button type="button" onclick="location.href='../m2board/delete.do?mode=edit&idx=${param.idx}';">
-            삭제하기
-         </button>
-         <button type="button" onclick="location.href='../m2board/list.do';">
-         	목록바로가기
-         </button>
+      <tr>
+         <td colspan="4" align="center">
+               <button type="button" onclick="location.href='../m2board/pass.do?mode=edit&idx=${param.idx}';">수정하기</button>
+               <button type="button" onclick="location.href='../m2board/pass.do?mode=delete&idx=${param.idx}';">삭제하기</button>
+               <button type="button" onclick="location.href='../m2board/list.do';">목록바로가기</button>
          </td>
-         </tr>
+      </tr>
+      
    </table>
+   <script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+   <script>
+	      $('#downbtn').on('click',(e)=>{
+	          e.preventDefault();
+	    	  console.log('btn click');
+	    	  $.ajax({
+	    		  type:'post',
+	    	  	  async: false,
+	    	  	  url :'/jspstudy/m2board/download.do',
+	    	  	  dataType:'text',
+	    	  	  data:{idx:'${dto.idx}'},
+	    	  	  success: function(data,textStatus){
+	    	  		  console.log(data);
+	    	  		  $('#dcount').text(data);
+	    	  	  },
+	    	  	  error:function(data,textStatus){
+	    	  		  console.log('error',data,textStatus);
+	    	  	  }
+	      })
+	   });
+   </script>
 </body>
 </html>
