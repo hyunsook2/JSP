@@ -20,13 +20,13 @@ public class MBoardDAO extends JDBConnPool {
       System.out.println();
       System.out.println(map.get("searchType")+"|||"+map.get("searchStr"));
       
-      String sql="select count(*) from FILEBOARD";
+      String zz="select count(*) from FILEBOARD";
          if(map.get("searchStr")!=null) {
-            sql += " where "+map.get("searchType")+" like '%"+map.get("searchStr")+"%'";
+            zz += " where "+map.get("searchType")+" like '%"+map.get("searchStr")+"%'";
          }
-         System.out.println(sql);
+         System.out.println(zz);
          try {
-            psmt=con.prepareStatement(sql);
+            psmt=con.prepareStatement(zz);
             rs=psmt.executeQuery();
             rs.next();
             totalCount=rs.getInt(1);
@@ -40,17 +40,17 @@ public class MBoardDAO extends JDBConnPool {
    public List<MBoardDTO> getListPage(Map<String, Object> map){
       List<MBoardDTO> bl = new Vector<>();
       
-      String sql = "select * from (select rownum pnum, s.* from(select b.* from FILEBOARD b ";
+      String zz = "select * from (select rownum pnum, s.* from(select b.* from FILEBOARD b ";
          if(map.get("searchStr")!=null) {
-            sql += " where "+map.get("searchType")+" like '%"+map.get("searchStr")+"%'";
+            zz += " where "+map.get("searchType")+" like '%"+map.get("searchStr")+"%'";
          }
          
-         sql+=" order by idx desc) s) where pnum between ? and ?";
+         zz+=" order by idx desc) s) where pnum between ? and ?";
          
-         System.out.println(sql);
+         System.out.println(zz);
          
          try {
-            psmt = con.prepareStatement(sql);
+            psmt = con.prepareStatement(zz);
             psmt.setString(1, map.get("start").toString());
             psmt.setString(2, map.get("end").toString());
             rs= psmt.executeQuery();
@@ -78,10 +78,10 @@ public class MBoardDAO extends JDBConnPool {
    }
    public int insertWrite(MBoardDTO dto) {
 		int result=0;
-		String query="insert into fileboard(idx,name,title,content,ofile,nfile,pass)"
+		String zz="insert into fileboard(idx,name,title,content,ofile,nfile,pass)"
 				+ "values(seq_board_num.nextval,?,?,?,?,?,?)";
 		try {
-			psmt=con.prepareStatement(query);
+			psmt=con.prepareStatement(zz);
 			psmt.setString(1, dto.getName());
 			psmt.setString(2, dto.getTitle());
 			psmt.setString(3, dto.getContent());
@@ -96,9 +96,9 @@ public class MBoardDAO extends JDBConnPool {
 		return result;
 	}
    public void updateVisitCount(String idx) {
-	   String query="update fileboard set visitcount=visitcount+1 "+" where idx=?";
+	   String zz="update fileboard set visitcount=visitcount+1 "+" where idx=?";
 	   try {
-		   psmt=con.prepareStatement(query);
+		   psmt=con.prepareStatement(zz);
 		   psmt.setString(1, idx);
 		   psmt.executeUpdate();
 	   }catch(Exception e) {
@@ -110,9 +110,9 @@ public class MBoardDAO extends JDBConnPool {
    public MBoardDTO getView(String idx) {
 	      MBoardDTO dto = new MBoardDTO();
 
-	      String query = "SELECT * FROM fileboard b WHERE idx=?";
+	      String zz = "SELECT * FROM fileboard b WHERE idx=?";
 	      try {
-	         psmt = con.prepareStatement(query);
+	         psmt = con.prepareStatement(zz);
 	         psmt.setString(1, idx);
 	         rs = psmt.executeQuery();
 	         if (rs.next()) {
@@ -136,9 +136,9 @@ public class MBoardDAO extends JDBConnPool {
 
 
 	public void updateDowncount(String idx) {
-		String query="update fileboard set downcount=downcount+1 "+" where idx=?";
+		String zz="update fileboard set downcount=downcount+1 "+" where idx=?";
 		try {
-			psmt=con.prepareStatement(query);
+			psmt=con.prepareStatement(zz);
 			psmt.setString(1, idx);
 			psmt.executeUpdate();
 		} catch (Exception e) {
@@ -147,4 +147,73 @@ public class MBoardDAO extends JDBConnPool {
 		}
 	}
 
+
+	public int getDowncount(String idx) {
+		int dcount=0;
+		String zz = "select downcount from fileboard where idx=?";
+		try {
+			psmt=con.prepareStatement(zz);
+			psmt.setString(1, idx);
+			rs=psmt.executeQuery();
+			rs.next();
+			dcount=rs.getInt(1);
+		}catch (Exception e) {
+			System.out.println("다운로드 수 읽기 중 에러");
+			e.printStackTrace();
+		}
+		return dcount;
+	}
+	public boolean confirmPassword(String pass, String idx) {
+		boolean isRight=false;
+		try {
+			String zz="SELECT COUNT(*) FROM FILEBOARD WHERE PASS=? AND IDX=?";
+			psmt=con.prepareStatement(zz);
+			psmt.setString(1, pass);
+			psmt.setString(2, idx);
+			rs=psmt.executeQuery();
+			rs.next();
+			if(rs.getInt(1)==1) {
+				isRight=true;
+			}
+		}catch(Exception e) {
+			isRight=false;
+			System.out.println("암호 검증 중 에러");
+			e.printStackTrace();
+		}
+		return isRight;
+	}
+	public int deletePost(String idx) {
+		int result=0;
+		try {
+			String zz="delete from fileboard where idx=?";
+			psmt=con.prepareStatement(zz);
+			psmt.setString(1, idx);
+			result=psmt.executeUpdate();
+		} catch (Exception e) {
+			System.out.println("삭제중에러");
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+
+	public int updatePost(MBoardDTO dto) {
+		int result=0;
+		try {
+			String zz="update fileboard set title=?, name=? ,content=?, ofile=?, nfile=? where idx=? and pass=?";
+			psmt=con.prepareStatement(zz);
+			psmt.setString(1, dto.getTitle());
+			psmt.setString(2, dto.getName());
+			psmt.setString(3, dto.getContent());
+			psmt.setString(4, dto.getOfile());
+			psmt.setString(5, dto.getNfile());
+			psmt.setString(6, dto.getIdx());
+			psmt.setString(7, dto.getPass());
+			result=psmt.executeUpdate();
+		}catch(Exception e) {
+			System.out.println("게시물 수정중 에러");
+			e.printStackTrace();
+		}
+		return result;
+	}
 }
